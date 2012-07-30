@@ -117,7 +117,7 @@ class Metasploit3 < Msf::Auxiliary
 	def acquire_response(login,fingerprint_page)
 
 		# Adding a delay can be helpful not to overwhelm the target
-		select(nil,nil,nil,datastore['Delay'])
+		select(nil,nil,nil,datastore['DELAY'])
 
 		# Skip this server if there are too many failed attempts
 		return if too_many_failed_attempts()
@@ -219,7 +219,7 @@ class Metasploit3 < Msf::Auxiliary
 			# Check if the response matches in the fingerprint list.
 			@config.each do |interface|
 				# In case a user only wants a single interface
-				next unless interface['title'].include?(datastore['SingleInterface'])
+				next unless interface['title'].include?(datastore['SINGLE_INTERFACE'])
 
 				# An interface can have multiple fingerprints
 				interface['fingerprint_page'].each do |fp|
@@ -281,7 +281,7 @@ class Metasploit3 < Msf::Auxiliary
 
 					# Exit if the user says not to test creds. A used may do this if they just want
 					#	to identify target pages for later.
-					return if datastore['NoDefault']
+					return if datastore['NO_DEFAULT']
 
 					# Skip if there are no default creds to test
 					if @interface['creds']
@@ -332,7 +332,7 @@ class Metasploit3 < Msf::Auxiliary
 					@interface['tested'] = true
 
 					# Skip login attempts if the user says so
-					if @interface['creds'] and not datastore['NoDefault']
+					if @interface['creds'] and not datastore['NO_DEFAULT']
 						# First try the default credentials in the config file
 						@interface['creds'].each do |cred|
 							do_login_basic(cred.split(":")[0],cred.split(":")[1])
@@ -609,7 +609,7 @@ class Metasploit3 < Msf::Auxiliary
 
 	def target_url
 		vhost = rhost if not vhost
-		"#{vhost}:#{rport}#{datastore['Dir']}"
+		"#{vhost}:#{rport}#{datastore['DIR']}"
 	end
 
 	def check_fingerprint(res,regex)
