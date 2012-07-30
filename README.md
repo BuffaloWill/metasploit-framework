@@ -1,3 +1,7 @@
+Face Puncher
+==
+This fork contains the interface_fingerprinter auxiliary module and the interface_fingerprinter plugin. See the Wiki for more details.
+
 
 Metasploit
 ==
