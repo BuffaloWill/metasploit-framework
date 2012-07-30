@@ -51,8 +51,6 @@ class Metasploit3 < Msf::Auxiliary
 	end
 
 	def run_host(ip)
-		print_status("#{target_url} Reading configuration file #{datastore['CONFIG']}...")
-
 		begin
 			[
 			::Msf::Config.data_directory + File::SEPARATOR + "interface_fingerprints",
@@ -61,8 +59,10 @@ class Metasploit3 < Msf::Auxiliary
 				::Dir.new(dir).find_all { |e|
 					path = dir + File::SEPARATOR + e					
 					if ::File.file?(path) and File.readable?(path)
+						next if datastore['CONFIG'].length > 0 and datastore['CONFIG'].to_s != path.to_s 
+						print_status("#{target_url} Reading configuration file #{path}...")
+						
 						@config = YAML.load_file(path)
-						print_status("Using #{path} fingerprint file")
 
 						# Initialize global vars
 						@responses = {}
@@ -70,7 +70,7 @@ class Metasploit3 < Msf::Auxiliary
 						@fails = 0
 						@success = false
 						@hidden_params = ""
-				
+
 						# Load the URIs and attempt to connect
 						init_responses()
 
@@ -99,13 +99,13 @@ class Metasploit3 < Msf::Auxiliary
 			interface['fingerprint_page'].each do |login|
 				next if not login
 				if (!@responses.include?(login))
-					if (interface['title'].scan(datastore['SingleInterface']).length != 0)
-						@responses["#{datastore['Dir']}#{login}"] = interface
+					if (interface['title'].scan(datastore['SINGLE_INTERFACE']).length != 0)
+						@responses["#{datastore['DIR']}#{login}"] = interface
 					end
 				end
 			end
 		end
-
+		
 		print_status("#{target_url}  #{@responses.size} unique login pages in scope, requesting each. Please wait.")
 
 		# Make a request to each of the URIs and store the responses.
